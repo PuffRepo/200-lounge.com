@@ -1,0 +1,14 @@
+.git
+.next
+node_modules
+.vercel
+.env
+.env.*
+*.pem
+*.sqlite*
+*.db
+private
+output
+coverage
+tests
+npm-debug.log*

@@ -11,7 +11,13 @@ async function main(){
   const file=path.join(dir,'public.json'),fixture=structuredClone(require('./fixtures/s9.json'));
   fixture.generated_at=new Date().toISOString();await fs.writeFile(file,JSON.stringify(fixture));
   const socket=net.createServer();socket.listen(0,'127.0.0.1');await once(socket,'listening');const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
-  const child=spawn(process.execPath,[require.resolve('next/dist/bin/next'),'start','-p',String(port),'--hostname','127.0.0.1'],{cwd:root,env:{...process.env,S9_PUBLIC_DATA_FILE:file},stdio:['ignore','pipe','pipe']});
+  const standalone=process.env.STANDALONE_SMOKE==='1';
+  if(standalone){
+    await fs.cp(path.join(root,'public'),path.join(root,'.next/standalone/public'),{recursive:true});
+    await fs.cp(path.join(root,'.next/static'),path.join(root,'.next/standalone/.next/static'),{recursive:true});
+  }
+  const args=standalone?[path.join(root,'.next/standalone/server.js')]:[require.resolve('next/dist/bin/next'),'start','-p',String(port),'--hostname','127.0.0.1'];
+  const child=spawn(process.execPath,args,{cwd:root,env:{...process.env,PORT:String(port),HOSTNAME:'127.0.0.1',S9_PUBLIC_DATA_FILE:file},stdio:['ignore','pipe','pipe']});
   let output='';child.stdout.on('data',b=>output+=b);child.stderr.on('data',b=>output+=b);
   const base=`http://127.0.0.1:${port}`;
   try{
@@ -22,7 +28,7 @@ async function main(){
       await new Promise(resolve=>setTimeout(resolve,100));
     }
     assert.ok(ready,'Server did not become ready: '+output);
-    for(const [route,status] of [['/',200],['/player/P12',200],['/player/P13',200],['/player/NotFound',404],['/mogi/1',200],['/mogi/999',404],['/stats',200],['/records',200],['/api/all_players?player_id=123456789123456789',200],['/api/player/P12',200],['/api/discord/12',200],['/api/stats',200],['/api/stats/getCountOfPlayersInEachRank',200],['/?season=8',404]]){
+    for(const [route,status] of [['/api/health',200],['/',200],['/player/P12',200],['/player/P13',200],['/player/NotFound',404],['/mogi/1',200],['/mogi/999',404],['/stats',200],['/records',200],['/api/all_players?player_id=123456789123456789',200],['/api/player/P12',200],['/api/discord/12',200],['/api/stats',200],['/api/stats/getCountOfPlayersInEachRank',200],['/?season=8',404]]){
       const response=await fetch(base+route),body=await response.text();
       assert.equal(response.status,status,route+' '+body.slice(0,150));
       if(route.startsWith('/api/all_players'))assert.equal(JSON.parse(body)[0].player_id,'123456789123456789');
@@ -32,6 +38,7 @@ async function main(){
     }
     fixture.generated_at=new Date(Date.now()-901000).toISOString();await fs.writeFile(file,JSON.stringify(fixture));
     assert.equal((await fetch(base+'/api/all_players')).status,503);
+    assert.equal((await fetch(base+'/api/health')).status,503);
     const unavailable=await fetch(base+'/');assert.equal(unavailable.status,503);assert.ok((await unavailable.text()).includes('S9 data unavailable'));
     console.log('PASS stale feed: API and page return 503 without historical fallback');
   }finally{

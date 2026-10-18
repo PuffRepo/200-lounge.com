@@ -8,7 +8,8 @@
     "start": "next start -p 3001",
     "lint": "next lint",
     "test": "node --test tests/*.test.cjs",
-    "test:smoke": "node tests/smoke.cjs"
+    "test:smoke": "node tests/smoke.cjs",
+    "test:standalone": "node tests/standalone-smoke.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.10.0",
@@ -36,5 +37,8 @@
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.16",
     "tailwindcss": "^3.1.8"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

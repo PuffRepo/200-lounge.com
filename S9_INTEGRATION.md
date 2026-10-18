@@ -79,3 +79,9 @@ once deployed and fed correctly. Its actual configured source URL and refresh
 delay are still unverified. Test a known genuine player's S9 MMR against `/mmr`
 and the API before checking `/teamsmmr`, allowing the verified cache interval.
 Do not claim that a stale MogiBot cache has been fixed by changing this code alone.
+
+Railway deployment preparation is now provided in `RAILWAY_WEBSITE_SETUP.md`,
+`Dockerfile`, `railway.json` and `/api/health`. These files do not create a
+service or alter the live bot. The matching bot review adds an opt-in read-only
+public JSON worker so no production database volume or backup keys need to be
+shared with the website service. Follow the staged review/deployment steps.
