@@ -1,3 +1,4 @@
+import {packLeaderboard,unpackLeaderboard} from '../lib/leaderboard-transport.cjs'
 import s9 from '../lib/s9-data.cjs'
 import S9Status from '../components/S9Status'
 import { useState, useEffect, useCallback } from 'react'
@@ -12,7 +13,7 @@ export async function getServerSideProps(context) {
   try { season=s9.season(context.query) } catch { return {notFound:true} }
   if(season===9) {
     context.res.setHeader('Cache-Control','no-store')
-    try { const data=await s9.loadSnapshot(); return {props:{rows:s9.leaderboard(data),current_season:9,countries:s9.countryList(data),s9GeneratedAt:data.generated_at}} }
+    try { const data=await s9.loadSnapshot(); return {props:{leaderboard:packLeaderboard(s9.leaderboard(data)),current_season:9,countries:s9.countryList(data),s9GeneratedAt:data.generated_at}} }
     catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
   }
   const db_choice = `s${season}200lounge`
@@ -137,7 +138,7 @@ export async function getServerSideProps(context) {
 
 
 export default function Home(props) {
-  return props.s9Unavailable ? <S9Status /> : <HomeContent {...props} />
+  return props.s9Unavailable ? <S9Status /> : <HomeContent {...props} rows={props.leaderboard ? unpackLeaderboard(props.leaderboard) : props.rows} />
 }
 
 function HomeContent({ rows, current_season, countries }) {

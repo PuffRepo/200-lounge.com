@@ -51,6 +51,21 @@ async function main(){
     console.log('PASS S9-only navigation, archived link redirects and floored averages');
     const flag=await fetch(base+'/flags/jp.svg');assert.equal(flag.status,200);assert.ok((await flag.text()).includes('<svg'));
     console.log('PASS bundled flag HTTP asset');
+    // Reproduce the production roster size without live data or a database.
+    const large=structuredClone(fixture);
+    for(let i=14;i<=1916;i++)large.players.push({...structuredClone(fixture.players.find(p=>p.user_id==='13')),user_id:String(900000000000000000n+BigInt(i)),mkc_id:null,name:`FixturePlayer-${i}`,country_code:i%2?'JP':'US'});
+    await fs.writeFile(file,JSON.stringify(large));
+    const largePage=await fetch(base+'/?season=9');assert.equal(largePage.status,200);
+    const largeHtml=await largePage.text(),match=largeHtml.match(/<script[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+    assert.ok(match,'Next page data missing');
+    const next=JSON.parse(match[1]);
+    assert.equal(next.props.pageProps.leaderboard.length,1916);
+    assert.equal(next.props.pageProps.rows,undefined);
+    const decoded=require('../lib/leaderboard-transport.cjs').unpackLeaderboard(next.props.pageProps.leaderboard);
+    assert.equal(decoded.at(-1)['Player Name'],'FixturePlayer-1916');
+    assert.equal(decoded.find(row=>row.player_id==='12').MMR,5900);
+    const pageBytes=Buffer.byteLength(match[1]);assert.ok(pageBytes<128*1024,`Next page data was ${pageBytes} bytes`);
+    console.log('PASS 1916-player page JSON:',pageBytes,'bytes; full roster preserved');
     fixture.generated_at=new Date(Date.now()-901000).toISOString();await fs.writeFile(file,JSON.stringify(fixture));
     assert.equal((await fetch(base+'/api/all_players')).status,503);
     assert.equal((await fetch(base+'/api/health')).status,503);
