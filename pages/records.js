@@ -1,3 +1,5 @@
+import s9 from '../lib/s9-data.cjs'
+import S9Status from '../components/S9Status'
 import Head from 'next/head'
 import mysql from 'mysql2'
 import styles from '../styles/Home.module.css'
@@ -5,7 +7,13 @@ import RecordsTable from '../components/RecordsTable';
 
 
 export async function getServerSideProps(context) {
-  const season = context.query.season || 7
+  let season
+  try { season=s9.season(context.query) } catch { return {notFound:true} }
+  if(season===9) {
+    context.res.setHeader('Cache-Control','no-store')
+    try { const data=await s9.loadSnapshot(); return {props:{...s9.records(data),s9GeneratedAt:data.generated_at}} }
+    catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
+  }
   const db_choice = `s${season}200lounge`
   const connection = mysql.createConnection(
     {
@@ -105,7 +113,11 @@ export async function getServerSideProps(context) {
 }
 
 
-export default function Records({ all1, all2, all3, all4, all6, a1, a2, a3, a4, a6, b1, b2, b3, b4, b6, c1, c2, c3, c4, c6, sq2, sq3, sq4, sq6 }) {
+export default function Records(props) {
+  return props.s9Unavailable ? <S9Status /> : <RecordsContent {...props} />
+}
+
+function RecordsContent({ all1, all2, all3, all4, all6, a1, a2, a3, a4, a6, b1, b2, b3, b4, b6, c1, c2, c3, c4, c6, sq2, sq3, sq4, sq6 }) {
   function isObjectEmpty(obj) {
     return Object.keys(obj).length === 0;
   }

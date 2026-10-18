@@ -1,3 +1,6 @@
+import rankColors from '../../lib/rank-colors.cjs'
+import s9 from '../../lib/s9-data.cjs'
+import S9Status from '../../components/S9Status'
 import * as React from 'react';
 import Head from 'next/head'
 import mysql from 'mysql2'
@@ -9,7 +12,13 @@ import MMRTable from '../../components/MMRTable';
 
 export async function getServerSideProps(context) {
   const mogi_id = context.query.id
-  const season = context.query.season || 7
+  let season
+  try { season=s9.season(context.query) } catch { return {notFound:true} }
+  if(season===9) {
+    context.res.setHeader('Cache-Control','no-store')
+    try { const data=await s9.loadSnapshot(); return s9.mogiProps(data,context.query.id) }
+    catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
+  }
   const db_choice = `s${season}200lounge`
   const connection = mysql.createConnection(
     {
@@ -63,7 +72,7 @@ export async function getServerSideProps(context) {
 
     // return props as object ALWAYS
     return {
-      props: { results, pm, avg_room_mmr }
+      props: { results, pm, avg_room_mmr, season }
     }
   } finally {
     // End connection to server
@@ -72,7 +81,11 @@ export async function getServerSideProps(context) {
 }
 
 
-export default function Mogi({ results, pm, avg_room_mmr }) {
+export default function Mogi(props) {
+  return props.s9Unavailable ? <S9Status /> : <MogiContent {...props} />
+}
+
+function MogiContent({ results, pm, avg_room_mmr, season = 9 }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -94,7 +107,7 @@ export default function Mogi({ results, pm, avg_room_mmr }) {
 
             <div className={styles.player_page_stats}>
               <h2 className='text-md font-bold'>Average Room MMR:</h2>
-              <div className={avg_room_mmr >= 11000 ? 'text-red-800' : avg_room_mmr >= 9000 ? 'text-violet-700' : avg_room_mmr >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : avg_room_mmr >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : avg_room_mmr >= 4500 ? 'text-yellow-500' : avg_room_mmr >= 3000 ? 'text-gray-400' : avg_room_mmr >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
+              <div className={rankColors.rankClass(avg_room_mmr,season)}>
                 {avg_room_mmr}
               </div>
             </div>
@@ -102,7 +115,7 @@ export default function Mogi({ results, pm, avg_room_mmr }) {
           </div>
 
           <div className='max-w-9xl'>
-            <MMRTable rows={pm} />
+            <MMRTable rows={pm} season={season} />
           </div>
         </div>
       </main>

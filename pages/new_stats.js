@@ -1,3 +1,4 @@
+import rankColors from '../lib/rank-colors.cjs'
 import Head from 'next/head'
 import axios from 'axios'
 import Link from 'next/link';
@@ -28,13 +29,14 @@ const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
 
 
 export async function getServerSideProps(context) {
-    const season = context.query.season || 7
+    const season = context.query.season || 9
     return {
         props: { season }
     }
 }
 
 export default function Stats({ season }) {
+    const selectedSeason=season
 
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
     const [offsetInHours, setOffsetInHours] = useState(0)
@@ -67,13 +69,13 @@ export default function Stats({ season }) {
 
     // Rank & rank colors
     var colors = []
-    const rank_names = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster']
+    const rank_names = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Emerald', 'Ruby', 'Diamond', 'Master', 'Grandmaster']
     if (prefersDarkMode) {
         // Master purple
-        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#9CCBD6', '#8b5cf6', '#A3022C']
+        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#50c878', '#ff5575', '#9CCBD6', '#8b5cf6', '#A3022C']
     } else {
         // Master black
-        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#9CCBD6', '#0E0B0B', '#A3022C']
+        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#50c878', '#ff5575', '#9CCBD6', '#0E0B0B', '#A3022C']
     }
 
 
@@ -194,7 +196,7 @@ export default function Stats({ season }) {
                                         <h2 className='text-md font-bold'>Today&apos;s Top Score:</h2>
                                         <div className='flex flex-row flex-wrap justify-center font-normal'>
                                             <div className="dark:text-cyan-600 text-blue-500 cursor-pointer hover:underline">
-                                                <SeasonPreservingLink to={`/player/${data.today_top_score[0].player_name}`}>
+                                                <SeasonPreservingLink to={`/player/${encodeURIComponent(data.today_top_score[0].player_name)}`}>
                                                     {data.today_top_score[0].player_name}
                                                 </SeasonPreservingLink>
                                             </div>
@@ -212,7 +214,7 @@ export default function Stats({ season }) {
                                         <h2 className='text-md font-bold'>Season Top Score:</h2>
                                         <div className='flex flex-row flex-wrap justify-center font-normal'>
                                             <div className="dark:text-cyan-600 text-blue-500 cursor-pointer hover:underline">
-                                                <SeasonPreservingLink to={`/player/${data.all_time_top_score[0].player_name}`}>
+                                                <SeasonPreservingLink to={`/player/${encodeURIComponent(data.all_time_top_score[0].player_name)}`}>
                                                     {data.all_time_top_score[0].player_name}
                                                 </SeasonPreservingLink>
                                             </div>
@@ -293,14 +295,14 @@ export default function Stats({ season }) {
                                 {data.average_mmr ?
                                     <div className={styles.player_page_stats}>
                                         <h2 className='text-xl font-bold'>Average Mmr:</h2>
-                                        <div className={data.average_mmr[0].average >= 11000 ? 'text-red-800' : data.average_mmr[0].average >= 9000 ? 'text-violet-700' : data.average_mmr[0].average >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : data.average_mmr[0].average >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : data.average_mmr[0].average >= 4500 ? 'text-yellow-500' : data.average_mmr[0].average >= 3000 ? 'text-gray-400' : data.average_mmr[0].average >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{data.average_mmr[0].average}</div>
+                                        <div className={rankColors.rankClass(data.average_mmr[0].average,selectedSeason)}>{data.average_mmr[0].average}</div>
                                     </div>
                                     : <></>}
 
                                 {data.median_mmr ?
                                     <div className={styles.player_page_stats}>
                                         <h2 className='text-xl font-bold'>Median Mmr:</h2>
-                                        <div className={data.median_mmr[0].median >= 11000 ? 'text-red-800' : data.median_mmr[0].median >= 9000 ? 'text-violet-700' : data.median_mmr[0].median >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : data.median_mmr[0].median >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : data.median_mmr[0].median >= 4500 ? 'text-yellow-500' : data.median_mmr[0].median >= 3000 ? 'text-gray-400' : data.median_mmr[0].median >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{data.median_mmr[0].median}</div>
+                                        <div className={rankColors.rankClass(data.median_mmr[0].median,selectedSeason)}>{data.median_mmr[0].median}</div>
                                     </div>
                                     : <></>}
                             </div>

@@ -1,3 +1,5 @@
+import s9 from '../lib/s9-data.cjs'
+import S9Status from '../components/S9Status'
 import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import mysql from 'mysql2'
@@ -5,7 +7,13 @@ import styles from '../styles/Home.module.css'
 import Leaderboard from '../components/Leaderboard'
 
 export async function getServerSideProps(context) {
-  const season = context.query.season || 7
+  let season
+  try { season=s9.season(context.query) } catch { return {notFound:true} }
+  if(season===9) {
+    context.res.setHeader('Cache-Control','no-store')
+    try { const data=await s9.loadSnapshot(); return {props:{rows:s9.leaderboard(data),current_season:9,countries:[],s9GeneratedAt:data.generated_at}} }
+    catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
+  }
   const db_choice = `s${season}200lounge`
   const connection = mysql.createConnection(
     {
@@ -113,7 +121,7 @@ export async function getServerSideProps(context) {
 
 
 
-    let current_season = process.env.current_season
+    let current_season = season
     return {
       props: { rows, current_season, countries }
     }
@@ -127,7 +135,11 @@ export async function getServerSideProps(context) {
 
 
 
-export default function Home({ rows, current_season, countries }) {
+export default function Home(props) {
+  return props.s9Unavailable ? <S9Status /> : <HomeContent {...props} />
+}
+
+function HomeContent({ rows, current_season, countries }) {
 
   const useMediaQuery = (width) => {
     const [targetReached, setTargetReached] = useState(false);

@@ -1,3 +1,4 @@
+import rankColors from '../lib/rank-colors.cjs'
 import SeasonPreservingLink from './SeasonPreservingLink';
 import styles from '../styles/Table.module.css'
 import { useState } from 'react';
@@ -203,14 +204,15 @@ export default function MogiHistory(props) {
                 <StyledTableCell align="center">
                   <div className='font-bold'>
                   <div className={row.mmr_change > 0 ? 'text-green-500' : 'text-red-500'}>
-                    {row.mmr_change}
+                    {row.mmr_change === null ? 'Placement' : row.mmr_change}
+                  {row.refund > 0 ? <div className="text-xs">+{row.refund} refunded · effective {row.effective_mmr_change}</div> : null}
                   </div>
                   </div>
                 </StyledTableCell>
 
                 <StyledTableCell align="center">
                   <div className='font-bold'>
-                  <div className={row.new_mmr >= 11000 ? 'text-red-800' : row.new_mmr >= 9000 ? 'dark:text-violet-500 text-zinc-900' : row.new_mmr >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : row.new_mmr >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : row.new_mmr >= 4500 ? 'text-yellow-500' : row.new_mmr >= 3000 ? 'text-gray-400' : row.new_mmr >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
+                  <div className={rankColors.rankClass(row.new_mmr,props.season ?? 9)}>
                     {row.new_mmr}
                   </div>
                   </div>
@@ -227,7 +229,7 @@ export default function MogiHistory(props) {
           <StyledTableRow>
             <TablePagination
               rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
-              colSpan={rows[0].length}
+              colSpan={4}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

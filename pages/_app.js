@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
   }), [prefersDarkMode])
 
 
-  const [currentSeason, setCurrentSeason] = useState(7)
+  const [currentSeason, setCurrentSeason] = useState(9)
 
   return (<>
     <ThemeProvider theme={theme}>
@@ -26,6 +26,7 @@ export default function App({ Component, pageProps }) {
         <Navbar currentSeason={currentSeason}/>
         <SeasonPicker2 currentSeason={currentSeason} setCurrentSeason={setCurrentSeason} />
       </div>
+      {pageProps.s9GeneratedAt ? <p className="text-center text-xs py-2">S9 · Updated {new Date(pageProps.s9GeneratedAt).toISOString().replace('T',' ').slice(0,19)} UTC · Win rate counts MMR gains; placements excluded.</p> : null}
       <Component {...pageProps} />
       <TileGrid />
     </ThemeProvider>

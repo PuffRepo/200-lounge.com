@@ -1,3 +1,4 @@
+import s9 from '../../../lib/s9-data.cjs'
 import mysql from 'mysql2';
 
 export const config = {
@@ -6,7 +7,8 @@ export const config = {
   },
 }
 export default async function handler(req, res) {
-  const season = req.query.season || 7
+  if(await s9.handleApi(req,res,'getAverageMMR'))return
+  const season = s9.season(req.query)
   const db_choice = `s${season}200lounge`
   const connection = mysql.createConnection({
     host: process.env.db_host,

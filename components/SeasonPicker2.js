@@ -105,6 +105,7 @@ export default function SeasonPicker2(props) {
                         >
                             season 7
                         </button>
+                        <button className={current_season == 9 ? styles.navitemactive : styles.navitem} onClick={() => changeSeason(9)}>season 9</button>
                     </>}
             </div>
         </header>
@@ -128,6 +129,7 @@ export default function SeasonPicker2(props) {
                     onClick={() => changeSeason(7)}>
                     season 7
                 </button>
+                <button className={current_season == 9 ? styles.navitemactive : styles.navitem} onClick={() => changeSeason(9)}>season 9</button>
             </div>
             : <></>}
     </>

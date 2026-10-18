@@ -1,3 +1,4 @@
+import rankColors from '../lib/rank-colors.cjs'
 import SeasonPreservingLink from './SeasonPreservingLink'
 import styles from '../styles/Table.module.css'
 import React, { useRef, useState, useEffect } from 'react'
@@ -169,7 +170,7 @@ export default function Leaderboard(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-    const columns = Object.keys(rows[0]);
+    const columns = Object.keys(rows[0] || {player_id:null,Rank:null,Country:'','Player Name':'',MMR:null,'Peak MMR':null,'Win Rate':null,'Events Played':0,'Partner AVG':null,'AVG Score':null,'Largest Gain':0,'Largest Loss':0});
     const [sortedBy, setSortedBy] = useState({
         column: columns[1],
         asc: false,
@@ -367,9 +368,9 @@ export default function Leaderboard(props) {
 
                                     <StyledTableRow key={row.player_id}>
                                         <StyledTableCell align="center">
-                                            <div className={row.MMR >= 11000 ? 'text-red-800' : row.MMR >= 9000 ? 'dark:text-violet-500 text-zinc-900' : row.MMR >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : row.MMR >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : row.MMR >= 4500 ? 'text-yellow-500' : row.MMR >= 3000 ? 'text-gray-400' : row.MMR >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
+                                            <div className={rankColors.rankClass(row.MMR,current_season)}>
                                                 <div className='cursor-pointer hover:underline'>
-                                                <SeasonPreservingLink to={`/player/` + row['Player Name']}>
+                                                <SeasonPreservingLink to={`/player/` + encodeURIComponent(row['Player Name'])}>
                                                         {parseInt(row.Rank)}
                                                     </SeasonPreservingLink>
                                                 </div>
@@ -381,9 +382,9 @@ export default function Leaderboard(props) {
                                         </StyledTableCell>
 
                                         <StyledTableCell align="center">
-                                            <div className={row.MMR >= 11000 ? 'text-red-800' : row.MMR >= 9000 ? 'dark:text-violet-500 text-zinc-900' : row.MMR >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : row.MMR >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : row.MMR >= 4500 ? 'text-yellow-500' : row.MMR >= 3000 ? 'text-gray-400' : row.MMR >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
+                                            <div className={rankColors.rankClass(row.MMR,current_season)}>
                                                 <div className='cursor-pointer hover:underline'>
-                                                <SeasonPreservingLink to={`/player/` + row['Player Name']}>
+                                                <SeasonPreservingLink to={`/player/` + encodeURIComponent(row['Player Name'])}>
                                                         {row['Player Name']}
                                                     </SeasonPreservingLink>
                                                 </div>
@@ -391,18 +392,18 @@ export default function Leaderboard(props) {
                                         </StyledTableCell>
 
                                         <StyledTableCell align="center">
-                                            <div className={row.MMR >= 11000 ? 'text-red-800' : row.MMR >= 9000 ? 'dark:text-violet-500 text-zinc-900' : row.MMR >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : row.MMR >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : row.MMR >= 4500 ? 'text-yellow-500' : row.MMR >= 3000 ? 'text-gray-400' : row.MMR >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
-                                                {row.MMR}
+                                            <div className={rankColors.rankClass(row.MMR,current_season)}>
+                                                {row.MMR === null ? 'Unplaced' : row.MMR}
                                             </div>
                                         </StyledTableCell>
 
 
                                         <StyledTableCell align="center">
-                                            <div className={row['Peak MMR'] >= 11000 ? 'text-red-800' : row['Peak MMR'] >= 9000 ? 'dark:text-violet-500 text-zinc-900' : row['Peak MMR'] >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : row['Peak MMR'] >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : row['Peak MMR'] >= 4500 ? 'text-yellow-500' : row['Peak MMR'] >= 3000 ? 'text-gray-400' : row['Peak MMR'] >= 1500 ? 'text-orange-400' : 'text-stone-500'}>
-                                                {row['Peak MMR']}
+                                            <div className={rankColors.rankClass(row['Peak MMR'],current_season)}>
+                                                {row['Peak MMR'] === null ? '—' : row['Peak MMR']}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell align="center">{(row['Win Rate'] * 100).toFixed(2)}%</StyledTableCell>
+                                        <StyledTableCell align="center">{row['Win Rate'] === null ? '—' : (row['Win Rate'] * 100).toFixed(2) + '%'}</StyledTableCell>
                                         {/* 
                           <StyledTableCell align="center">{row['Win/Loss (Last 10)']}</StyledTableCell>
                         

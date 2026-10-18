@@ -1,14 +1,16 @@
+import s9 from '../../../lib/s9-data.cjs'
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import mysql from 'mysql2'
 
 export default async function handler(req, res) {
+  if(await s9.handleApi(req,res,'mogi'))return
   const mogi = req.query.id
   const connection = mysql.createConnection(
     {
       host: process.env.db_host,
       user: process.env.db_username,
       password: process.env.db_password,
-      database: process.env.db_database,
+      database: `s${s9.season(req.query)}200lounge`,
       insecureAuth: true,
       supportBigNumbers: true,
     }

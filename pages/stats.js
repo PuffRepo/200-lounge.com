@@ -1,3 +1,7 @@
+import rankColors from '../lib/rank-colors.cjs'
+import {useRouter} from 'next/router'
+import s9 from '../lib/s9-data.cjs'
+import S9Status from '../components/S9Status'
 
 import Head from 'next/head'
 import Link from 'next/link';
@@ -28,7 +32,13 @@ const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
 
 
 export async function getServerSideProps(context) {
-    const season = context.query.season || 7
+    let season
+  try { season=s9.season(context.query) } catch { return {notFound:true} }
+  if(season===9) {
+    context.res.setHeader('Cache-Control','no-store')
+    try { const data=await s9.loadSnapshot(); return {props:{...s9.seasonStats(data),s9GeneratedAt:data.generated_at}} }
+    catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
+  }
     const db_choice = `s${season}200lounge`
     const connection = mysql.createConnection(
         {
@@ -205,7 +215,11 @@ export async function getServerSideProps(context) {
 
 
 
-export default function Stats({ today_top_score, today_mogi_count, rank_count_by_player, total_registered_players, total_ranked_players, total_mogis_played, average_mmr, median_mmr, mogi_format_count, mogi_day_of_week_data, mogi_count_by_tier, mogis_per_rank, all_time_top_score, avg_mogis_per_day, season_length_in_days }) {
+export default function Stats(props) {
+  return props.s9Unavailable ? <S9Status /> : <StatsContent {...props} />
+}
+
+function StatsContent({ today_top_score, today_mogi_count, rank_count_by_player, total_registered_players, total_ranked_players, total_mogis_played, average_mmr, median_mmr, mogi_format_count, mogi_day_of_week_data, mogi_count_by_tier, mogis_per_rank, all_time_top_score, avg_mogis_per_day, season_length_in_days }) {
 
     // Turns a 24 hour number into an AM PM time
     function formatHour(hour) {
@@ -214,6 +228,7 @@ export default function Stats({ today_top_score, today_mogi_count, rank_count_by
         return `${formattedHour}${period}`;
     }
 
+    const selectedSeason=useRouter().query.season || 9
     // Mobile handling things
     const [width, setWidth] = useState(typeof window === 'undefined' ? 0 : window.innerWidth)
     const [isMobile, setIsMobile] = useState(false)
@@ -230,13 +245,13 @@ export default function Stats({ today_top_score, today_mogi_count, rank_count_by
     // Rank & rank colors
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
     var colors = []
-    const rank_names = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster']
+    const rank_names = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Emerald', 'Ruby', 'Diamond', 'Master', 'Grandmaster']
     if (prefersDarkMode) {
         // Master purple
-        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#9CCBD6', '#8b5cf6', '#A3022C']
+        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#50c878', '#ff5575', '#9CCBD6', '#8b5cf6', '#A3022C']
     } else {
         // Master black
-        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#9CCBD6', '#0E0B0B', '#A3022C']
+        colors = ['#817876', '#E67E22', '#7D8396', '#F1C40F', '#3FABB8', '#50c878', '#ff5575', '#9CCBD6', '#0E0B0B', '#A3022C']
     }
 
     // Map data to include a color property based on rank_name
@@ -319,7 +334,7 @@ export default function Stats({ today_top_score, today_mogi_count, rank_count_by
                                 <h2 className='text-md font-bold'>Today&apos;s Top Score:</h2>
                                 <div className='flex flex-row flex-wrap justify-center font-normal'>
                                     <div className="dark:text-cyan-600 text-blue-500 cursor-pointer hover:underline">
-                                        <SeasonPreservingLink to={`/player/${today_top_score[0].player_name}`}>
+                                        <SeasonPreservingLink to={`/player/${encodeURIComponent(today_top_score[0].player_name)}`}>
                                             {today_top_score[0].player_name}
                                         </SeasonPreservingLink>
                                     </div>
@@ -337,7 +352,7 @@ export default function Stats({ today_top_score, today_mogi_count, rank_count_by
                                 <h2 className='text-md font-bold'>Season Top Score:</h2>
                                 <div className='flex flex-row flex-wrap justify-center font-normal'>
                                     <div className="dark:text-cyan-600 text-blue-500 cursor-pointer hover:underline">
-                                        <SeasonPreservingLink to={`/player/${all_time_top_score[0].player_name}`}>
+                                        <SeasonPreservingLink to={`/player/${encodeURIComponent(all_time_top_score[0].player_name)}`}>
                                             {all_time_top_score[0].player_name}
                                         </SeasonPreservingLink>
                                     </div>
@@ -425,14 +440,14 @@ export default function Stats({ today_top_score, today_mogi_count, rank_count_by
                         {average_mmr ?
                             <div className={styles.player_page_stats}>
                                 <h2 className='text-xl font-bold'>Average Mmr:</h2>
-                                <div className={average_mmr[0].average >= 11000 ? 'text-red-800' : average_mmr[0].average >= 9000 ? 'text-violet-700' : average_mmr[0].average >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : average_mmr[0].average >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : average_mmr[0].average >= 4500 ? 'text-yellow-500' : average_mmr[0].average >= 3000 ? 'text-gray-400' : average_mmr[0].average >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{average_mmr[0].average}</div>
+                                <div className={rankColors.rankClass(average_mmr[0].average,selectedSeason)}>{average_mmr[0].average}</div>
                             </div>
                             : <></>}
 
                         {median_mmr ?
                             <div className={styles.player_page_stats}>
                                 <h2 className='text-xl font-bold'>Median Mmr:</h2>
-                                <div className={median_mmr[0].median >= 11000 ? 'text-red-800' : median_mmr[0].median >= 9000 ? 'text-violet-700' : median_mmr[0].median >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : median_mmr[0].median >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : median_mmr[0].median >= 4500 ? 'text-yellow-500' : median_mmr[0].median >= 3000 ? 'text-gray-400' : median_mmr[0].median >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{median_mmr[0].median}</div>
+                                <div className={rankColors.rankClass(median_mmr[0].median,selectedSeason)}>{median_mmr[0].median}</div>
                             </div>
                             : <></>}
                     </div>

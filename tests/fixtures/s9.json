@@ -1,0 +1,946 @@
+{
+  "schema_version": 1,
+  "season": "S9",
+  "generated_at": "2026-10-18T02:46:00.297512+00:00",
+  "rank_policy": [
+    {
+      "name": "Iron",
+      "minimum": 0
+    },
+    {
+      "name": "Bronze",
+      "minimum": 1500
+    },
+    {
+      "name": "Silver",
+      "minimum": 3000
+    },
+    {
+      "name": "Gold",
+      "minimum": 4500
+    },
+    {
+      "name": "Platinum",
+      "minimum": 6000
+    },
+    {
+      "name": "Emerald",
+      "minimum": 7500
+    },
+    {
+      "name": "Ruby",
+      "minimum": 9000
+    },
+    {
+      "name": "Diamond",
+      "minimum": 10500
+    },
+    {
+      "name": "Master",
+      "minimum": 12000
+    },
+    {
+      "name": "Grandmaster",
+      "minimum": 13500
+    }
+  ],
+  "players": [
+    {
+      "user_id": "123456789123456789",
+      "name": "国際 ★",
+      "mkc_id": 1,
+      "mmr": 6200,
+      "rank": "Platinum",
+      "position": 1,
+      "peak_mmr": 6200,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            100
+          ],
+          "user_id": "123456789123456789",
+          "name": "国際 ★",
+          "played_as": "P1",
+          "score": 100,
+          "team": 0,
+          "place": 1,
+          "before": 6000,
+          "after": 6200,
+          "kind": "table",
+          "original_delta": 200,
+          "delta": 200,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 200,
+        "refunds": 0,
+        "net_table_delta": 200,
+        "average_delta": 200,
+        "average_score": 100,
+        "top_score": 100,
+        "partner_average": 100,
+        "largest_gain": 200,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 200
+        }
+      }
+    },
+    {
+      "user_id": "2",
+      "name": "P2",
+      "mkc_id": 2,
+      "mmr": 6200,
+      "rank": "Platinum",
+      "position": 1,
+      "peak_mmr": 6200,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            100
+          ],
+          "user_id": "2",
+          "name": "P2",
+          "played_as": "P2",
+          "score": 100,
+          "team": 0,
+          "place": 1,
+          "before": 6000,
+          "after": 6200,
+          "kind": "table",
+          "original_delta": 200,
+          "delta": 200,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 200,
+        "refunds": 0,
+        "net_table_delta": 200,
+        "average_delta": 200,
+        "average_score": 100,
+        "top_score": 100,
+        "partner_average": 100,
+        "largest_gain": 200,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 200
+        }
+      }
+    },
+    {
+      "user_id": "3",
+      "name": "P3",
+      "mkc_id": 3,
+      "mmr": 6120,
+      "rank": "Platinum",
+      "position": 3,
+      "peak_mmr": 6120,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            90
+          ],
+          "user_id": "3",
+          "name": "P3",
+          "played_as": "P3",
+          "score": 90,
+          "team": 1,
+          "place": 2,
+          "before": 6000,
+          "after": 6120,
+          "kind": "table",
+          "original_delta": 120,
+          "delta": 120,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 120,
+        "refunds": 0,
+        "net_table_delta": 120,
+        "average_delta": 120,
+        "average_score": 90,
+        "top_score": 90,
+        "partner_average": 90,
+        "largest_gain": 120,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 120
+        }
+      }
+    },
+    {
+      "user_id": "4",
+      "name": "P4",
+      "mkc_id": 4,
+      "mmr": 6120,
+      "rank": "Platinum",
+      "position": 3,
+      "peak_mmr": 6120,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            90
+          ],
+          "user_id": "4",
+          "name": "P4",
+          "played_as": "P4",
+          "score": 90,
+          "team": 1,
+          "place": 2,
+          "before": 6000,
+          "after": 6120,
+          "kind": "table",
+          "original_delta": 120,
+          "delta": 120,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 120,
+        "refunds": 0,
+        "net_table_delta": 120,
+        "average_delta": 120,
+        "average_score": 90,
+        "top_score": 90,
+        "partner_average": 90,
+        "largest_gain": 120,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 120
+        }
+      }
+    },
+    {
+      "user_id": "5",
+      "name": "P5",
+      "mkc_id": 5,
+      "mmr": 6040,
+      "rank": "Platinum",
+      "position": 5,
+      "peak_mmr": 6040,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            85
+          ],
+          "user_id": "5",
+          "name": "P5",
+          "played_as": "P5",
+          "score": 85,
+          "team": 2,
+          "place": 3,
+          "before": 6000,
+          "after": 6040,
+          "kind": "table",
+          "original_delta": 40,
+          "delta": 40,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 40,
+        "refunds": 0,
+        "net_table_delta": 40,
+        "average_delta": 40,
+        "average_score": 85,
+        "top_score": 85,
+        "partner_average": 85,
+        "largest_gain": 40,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 40
+        }
+      }
+    },
+    {
+      "user_id": "6",
+      "name": "P6",
+      "mkc_id": 6,
+      "mmr": 6040,
+      "rank": "Platinum",
+      "position": 5,
+      "peak_mmr": 6040,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            85
+          ],
+          "user_id": "6",
+          "name": "P6",
+          "played_as": "P6",
+          "score": 85,
+          "team": 2,
+          "place": 3,
+          "before": 6000,
+          "after": 6040,
+          "kind": "table",
+          "original_delta": 40,
+          "delta": 40,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 1,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": 100.0,
+        "original_delta": 40,
+        "refunds": 0,
+        "net_table_delta": 40,
+        "average_delta": 40,
+        "average_score": 85,
+        "top_score": 85,
+        "partner_average": 85,
+        "largest_gain": 40,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 1,
+          "losses": 0,
+          "ties": 0,
+          "delta": 40
+        }
+      }
+    },
+    {
+      "user_id": "7",
+      "name": "P7",
+      "mkc_id": 7,
+      "mmr": 5960,
+      "rank": "Gold",
+      "position": 7,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            80
+          ],
+          "user_id": "7",
+          "name": "P7",
+          "played_as": "P7",
+          "score": 80,
+          "team": 3,
+          "place": 4,
+          "before": 6000,
+          "after": 5960,
+          "kind": "table",
+          "original_delta": -40,
+          "delta": -40,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -40,
+        "refunds": 0,
+        "net_table_delta": -40,
+        "average_delta": -40,
+        "average_score": 80,
+        "top_score": 80,
+        "partner_average": 80,
+        "largest_gain": 0,
+        "largest_loss": -40,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -40
+        }
+      }
+    },
+    {
+      "user_id": "8",
+      "name": "P8",
+      "mkc_id": 8,
+      "mmr": 5960,
+      "rank": "Gold",
+      "position": 7,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            80
+          ],
+          "user_id": "8",
+          "name": "P8",
+          "played_as": "P8",
+          "score": 80,
+          "team": 3,
+          "place": 4,
+          "before": 6000,
+          "after": 5960,
+          "kind": "table",
+          "original_delta": -40,
+          "delta": -40,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -40,
+        "refunds": 0,
+        "net_table_delta": -40,
+        "average_delta": -40,
+        "average_score": 80,
+        "top_score": 80,
+        "partner_average": 80,
+        "largest_gain": 0,
+        "largest_loss": -40,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -40
+        }
+      }
+    },
+    {
+      "user_id": "9",
+      "name": "P9",
+      "mkc_id": 9,
+      "mmr": 5880,
+      "rank": "Gold",
+      "position": 10,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            70
+          ],
+          "user_id": "9",
+          "name": "P9",
+          "played_as": "P9",
+          "score": 70,
+          "team": 4,
+          "place": 5,
+          "before": 6000,
+          "after": 5880,
+          "kind": "table",
+          "original_delta": -120,
+          "delta": -120,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -120,
+        "refunds": 0,
+        "net_table_delta": -120,
+        "average_delta": -120,
+        "average_score": 70,
+        "top_score": 70,
+        "partner_average": 70,
+        "largest_gain": 0,
+        "largest_loss": -120,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -120
+        }
+      }
+    },
+    {
+      "user_id": "10",
+      "name": "P10",
+      "mkc_id": 10,
+      "mmr": 5880,
+      "rank": "Gold",
+      "position": 10,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            70
+          ],
+          "user_id": "10",
+          "name": "P10",
+          "played_as": "P10",
+          "score": 70,
+          "team": 4,
+          "place": 5,
+          "before": 6000,
+          "after": 5880,
+          "kind": "table",
+          "original_delta": -120,
+          "delta": -120,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -120,
+        "refunds": 0,
+        "net_table_delta": -120,
+        "average_delta": -120,
+        "average_score": 70,
+        "top_score": 70,
+        "partner_average": 70,
+        "largest_gain": 0,
+        "largest_loss": -120,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -120
+        }
+      }
+    },
+    {
+      "user_id": "11",
+      "name": "P11",
+      "mkc_id": 11,
+      "mmr": 5800,
+      "rank": "Gold",
+      "position": 12,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            67
+          ],
+          "user_id": "11",
+          "name": "P11",
+          "played_as": "P11",
+          "score": 67,
+          "team": 5,
+          "place": 6,
+          "before": 6000,
+          "after": 5800,
+          "kind": "table",
+          "original_delta": -200,
+          "delta": -200,
+          "refund": 0
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -200,
+        "refunds": 0,
+        "net_table_delta": -200,
+        "average_delta": -200,
+        "average_score": 67,
+        "top_score": 67,
+        "partner_average": 67,
+        "largest_gain": 0,
+        "largest_loss": -200,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -200
+        }
+      }
+    },
+    {
+      "user_id": "12",
+      "name": "P12",
+      "mkc_id": 12,
+      "mmr": 5900,
+      "rank": "Gold",
+      "position": 9,
+      "peak_mmr": 6000,
+      "history": [
+        {
+          "table_id": 1,
+          "sequence": 1,
+          "tier": "tier-all",
+          "format_size": 2,
+          "applied_at": "2026-10-18 02:46:00",
+          "partner_scores": [
+            67
+          ],
+          "user_id": "12",
+          "name": "P12",
+          "played_as": "P12",
+          "score": 67,
+          "team": 5,
+          "place": 6,
+          "before": 6000,
+          "after": 5800,
+          "kind": "table",
+          "original_delta": -200,
+          "delta": -100,
+          "refund": 100
+        }
+      ],
+      "summary": {
+        "tables": 1,
+        "rated_tables": 1,
+        "placements": 0,
+        "gains": 0,
+        "losses": 1,
+        "ties": 0,
+        "gain_rate": 0.0,
+        "original_delta": -200,
+        "refunds": 100,
+        "net_table_delta": -100,
+        "average_delta": -100,
+        "average_score": 67,
+        "top_score": 67,
+        "partner_average": 67,
+        "largest_gain": 0,
+        "largest_loss": -100,
+        "last_ten": {
+          "gains": 0,
+          "losses": 1,
+          "ties": 0,
+          "delta": -100
+        }
+      }
+    },
+    {
+      "user_id": "13",
+      "name": "P13",
+      "mkc_id": 13,
+      "mmr": null,
+      "rank": "Placement",
+      "position": null,
+      "peak_mmr": null,
+      "history": [],
+      "summary": {
+        "tables": 0,
+        "rated_tables": 0,
+        "placements": 0,
+        "gains": 0,
+        "losses": 0,
+        "ties": 0,
+        "gain_rate": null,
+        "original_delta": 0,
+        "refunds": 0,
+        "net_table_delta": 0,
+        "average_delta": null,
+        "average_score": null,
+        "top_score": null,
+        "partner_average": null,
+        "largest_gain": 0,
+        "largest_loss": 0,
+        "last_ten": {
+          "gains": 0,
+          "losses": 0,
+          "ties": 0,
+          "delta": 0
+        }
+      }
+    }
+  ],
+  "tables": [
+    {
+      "id": 1,
+      "sequence": 1,
+      "tier": "tier-all",
+      "format_size": 2,
+      "applied_at": "2026-10-18 02:46:00",
+      "rows": [
+        {
+          "user_id": "123456789123456789",
+          "name": "国際 ★",
+          "played_as": "P1",
+          "score": 100,
+          "team": 0,
+          "place": 1,
+          "before": 6000,
+          "after": 6200,
+          "kind": "table",
+          "original_delta": 200,
+          "delta": 200,
+          "refund": 0
+        },
+        {
+          "user_id": "2",
+          "name": "P2",
+          "played_as": "P2",
+          "score": 100,
+          "team": 0,
+          "place": 1,
+          "before": 6000,
+          "after": 6200,
+          "kind": "table",
+          "original_delta": 200,
+          "delta": 200,
+          "refund": 0
+        },
+        {
+          "user_id": "3",
+          "name": "P3",
+          "played_as": "P3",
+          "score": 90,
+          "team": 1,
+          "place": 2,
+          "before": 6000,
+          "after": 6120,
+          "kind": "table",
+          "original_delta": 120,
+          "delta": 120,
+          "refund": 0
+        },
+        {
+          "user_id": "4",
+          "name": "P4",
+          "played_as": "P4",
+          "score": 90,
+          "team": 1,
+          "place": 2,
+          "before": 6000,
+          "after": 6120,
+          "kind": "table",
+          "original_delta": 120,
+          "delta": 120,
+          "refund": 0
+        },
+        {
+          "user_id": "5",
+          "name": "P5",
+          "played_as": "P5",
+          "score": 85,
+          "team": 2,
+          "place": 3,
+          "before": 6000,
+          "after": 6040,
+          "kind": "table",
+          "original_delta": 40,
+          "delta": 40,
+          "refund": 0
+        },
+        {
+          "user_id": "6",
+          "name": "P6",
+          "played_as": "P6",
+          "score": 85,
+          "team": 2,
+          "place": 3,
+          "before": 6000,
+          "after": 6040,
+          "kind": "table",
+          "original_delta": 40,
+          "delta": 40,
+          "refund": 0
+        },
+        {
+          "user_id": "7",
+          "name": "P7",
+          "played_as": "P7",
+          "score": 80,
+          "team": 3,
+          "place": 4,
+          "before": 6000,
+          "after": 5960,
+          "kind": "table",
+          "original_delta": -40,
+          "delta": -40,
+          "refund": 0
+        },
+        {
+          "user_id": "8",
+          "name": "P8",
+          "played_as": "P8",
+          "score": 80,
+          "team": 3,
+          "place": 4,
+          "before": 6000,
+          "after": 5960,
+          "kind": "table",
+          "original_delta": -40,
+          "delta": -40,
+          "refund": 0
+        },
+        {
+          "user_id": "9",
+          "name": "P9",
+          "played_as": "P9",
+          "score": 70,
+          "team": 4,
+          "place": 5,
+          "before": 6000,
+          "after": 5880,
+          "kind": "table",
+          "original_delta": -120,
+          "delta": -120,
+          "refund": 0
+        },
+        {
+          "user_id": "10",
+          "name": "P10",
+          "played_as": "P10",
+          "score": 70,
+          "team": 4,
+          "place": 5,
+          "before": 6000,
+          "after": 5880,
+          "kind": "table",
+          "original_delta": -120,
+          "delta": -120,
+          "refund": 0
+        },
+        {
+          "user_id": "11",
+          "name": "P11",
+          "played_as": "P11",
+          "score": 67,
+          "team": 5,
+          "place": 6,
+          "before": 6000,
+          "after": 5800,
+          "kind": "table",
+          "original_delta": -200,
+          "delta": -200,
+          "refund": 0
+        },
+        {
+          "user_id": "12",
+          "name": "P12",
+          "played_as": "P12",
+          "score": 67,
+          "team": 5,
+          "place": 6,
+          "before": 6000,
+          "after": 5800,
+          "kind": "table",
+          "original_delta": -200,
+          "delta": -100,
+          "refund": 100
+        }
+      ]
+    }
+  ]
+}

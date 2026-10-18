@@ -1,3 +1,6 @@
+import rankColors from '../../lib/rank-colors.cjs'
+import s9 from '../../lib/s9-data.cjs'
+import S9Status from '../../components/S9Status'
 import * as React from 'react';
 import { useState, useEffect } from 'react'
 import ReactCountryFlag from "react-country-flag"
@@ -18,7 +21,13 @@ const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
 
 export async function getServerSideProps(context) {
   const player = context.query.name
-  const season = context.query.season || 7
+  let season
+  try { season=s9.season(context.query) } catch { return {notFound:true} }
+  if(season===9) {
+    context.res.setHeader('Cache-Control','no-store')
+    try { const data=await s9.loadSnapshot(); return s9.playerProps(data,context.query.name) }
+    catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
+  }
   const db_choice = `s${season}200lounge`
   const connection = mysql.createConnection(
     {
@@ -171,7 +180,11 @@ export async function getServerSideProps(context) {
 
 
 
-export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, partner_score_history, season, grid_color }) {
+export default function Player(props) {
+  return props.s9Unavailable ? <S9Status /> : <PlayerContent {...props} />
+}
+
+function PlayerContent({ results, rows, lg, ll, pa, rank, score_stuff, partner_score_history, season, grid_color, s9GeneratedAt }) {
 
   // Mobile handling things
   const [width, setWidth] = useState(typeof window === 'undefined' ? 0 : window.innerWidth)
@@ -193,6 +206,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
     date: new Date(row.create_date * 1000).toLocaleDateString(),
     mmr: row.new_mmr
   })).reverse()
+  if (Number(season) === 9 && results[0].mmr !== null) mmrHistory.push({mogi_id:null,date:new Date(s9GeneratedAt).toLocaleDateString(),mmr:results[0].mmr})
 
   const scoreHistory = rows.map(row => ({
     mogi_id: row.mogi_id,
@@ -208,8 +222,8 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
 
 
   // Get min & max values for history
-  const mmrMin = Math.min(...mmrHistory.map(item => item.mmr));
-  const mmrMax = Math.max(...mmrHistory.map(item => item.mmr));
+  const mmrMin = Math.min(...mmrHistory.map(item => item.mmr), results[0].mmr ?? 0);
+  const mmrMax = Math.max(...mmrHistory.map(item => item.mmr), results[0].mmr ?? 0);
 
 
 
@@ -226,7 +240,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
     if (data && data.activePayload && data.activePayload[0]) {
       const clickedData = data.activePayload[0].payload;
       // Navigate using the mogi_id from the clickedData
-      window.location.href = `/mogi/${clickedData.mogi_id}?season=${season}`;
+      if(clickedData.mogi_id) window.location.href = `/mogi/${clickedData.mogi_id}?season=${season}`;
     }
   };
 
@@ -290,17 +304,17 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
 
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>MMR</h2>
-              <div className={results[0]["mmr"] >= 11000 ? 'text-red-800' : results[0]["mmr"] >= 9000 ? 'dark:text-violet-500 text-zinc-900' : results[0]["mmr"] >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : results[0]["mmr"] >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : results[0]["mmr"] >= 4500 ? 'text-yellow-500' : results[0]["mmr"] >= 3000 ? 'text-gray-400' : results[0]["mmr"] >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{results[0]["mmr"]}</div>
+              <div className={rankColors.rankClass(results[0]["mmr"],season)}>{results[0].mmr === null ? 'Unplaced' : results[0].mmr}</div>
             </div>
 
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>Peak MMR</h2>
-              <div className={results[0]["peak mmr"] >= 11000 ? 'text-red-800' : results[0]["peak mmr"] >= 9000 ? 'dark:text-violet-500 text-zinc-900' : results[0]["peak mmr"] >= 7500 ? 'dark:text-cyan-200 text-cyan-500' : results[0]["peak mmr"] >= 6000 ? 'dark:text-cyan-600 text-cyan-900' : results[0]["peak mmr"] >= 4500 ? 'text-yellow-500' : results[0]["peak mmr"] >= 3000 ? 'text-gray-400' : results[0]["peak mmr"] >= 1500 ? 'text-orange-400' : 'text-stone-500'}>{results[0]["peak mmr"]}</div>
+              <div className={rankColors.rankClass(results[0]["peak mmr"],season)}>{results[0]["peak mmr"]}</div>
             </div>
 
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>Win Rate</h2>
-              <div>{results[0]["win rate"]}%</div>
+              <div>{results[0]["win rate"] === null ? '—' : results[0]["win rate"] + '%'}</div>
             </div>
 
             <div className={styles.player_page_stats}>
@@ -331,7 +345,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>Largest Gain</h2>
               <div className='cursor-pointer hover:underline dark:text-cyan-300 text-blue-500'>
-                <SeasonPreservingLink to={"/mogi/" + lg[0].mogi_id}>
+                <SeasonPreservingLink to={lg[0] ? "/mogi/" + lg[0].mogi_id : "#"}>
                   {results[0]["largest gain"]}
                 </SeasonPreservingLink>
               </div>
@@ -340,7 +354,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>Largest Loss</h2>
               <div className='cursor-pointer hover:underline dark:text-cyan-300 text-blue-500'>
-                <SeasonPreservingLink to={"/mogi/" + ll[0].mogi_id}>
+                <SeasonPreservingLink to={ll[0] ? "/mogi/" + ll[0].mogi_id : "#"}>
                   {results[0]["largest loss"]}
                 </SeasonPreservingLink>
               </div>
@@ -374,6 +388,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
                 <div className={'pb-6 m-auto border-double border-4 border-black dark:border-gray-700 bg-neutral-100 dark:bg-zinc-900'}>
                   <div className={styles.player_page_stats}>
                     MMR History
+                    {Number(season) === 9 ? <div className="text-xs">Applied table balances and current MMR; refunds and penalties may affect the current point.</div> : null}
                   </div>
                   <div className='m-auto z-10 h-72'>
                     <LineChart width={isMobile ? 400 : 500} height={isMobile ? 300 : 300} data={filteredMmrHistory} onClick={handleChartClick}>
@@ -435,7 +450,7 @@ export default function Player({ results, rows, lg, ll, pa, rank, score_stuff, p
           </div>
 
           <div className="m-auto p-1 z-10">
-            <MogiHistory rows={rows} />
+            <MogiHistory season={season} rows={rows} />
           </div>
         </div>
       </main>
