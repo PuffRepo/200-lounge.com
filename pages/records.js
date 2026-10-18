@@ -7,6 +7,7 @@ import RecordsTable from '../components/RecordsTable';
 
 
 export async function getServerSideProps(context) {
+  const redirect=s9.archiveRedirect(context.query);if(redirect)return redirect;
   let season
   try { season=s9.season(context.query) } catch { return {notFound:true} }
   if(season===9) {

@@ -11,6 +11,7 @@ import MMRTable from '../../components/MMRTable';
 
 
 export async function getServerSideProps(context) {
+  const redirect=s9.archiveRedirect(context.query);if(redirect)return redirect;
   const mogi_id = context.query.id
   let season
   try { season=s9.season(context.query) } catch { return {notFound:true} }

@@ -1,3 +1,4 @@
+import {formatAverage} from '../../lib/format-average.cjs'
 import rankColors from '../../lib/rank-colors.cjs'
 import s9 from '../../lib/s9-data.cjs'
 import S9Status from '../../components/S9Status'
@@ -20,6 +21,7 @@ const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
 });
 
 export async function getServerSideProps(context) {
+  const redirect=s9.archiveRedirect(context.query);if(redirect)return redirect;
   const player = context.query.name
   let season
   try { season=s9.season(context.query) } catch { return {notFound:true} }
@@ -329,7 +331,7 @@ function PlayerContent({ results, rows, lg, ll, pa, rank, score_stuff, partner_s
 
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>AVG Score</h2>
-              <div>{score_stuff[0]["avg score"]}</div>
+              <div>{formatAverage(score_stuff[0]["avg score"])}</div>
             </div>
 
             <div className={styles.player_page_stats}>
@@ -362,7 +364,7 @@ function PlayerContent({ results, rows, lg, ll, pa, rank, score_stuff, partner_s
 
             <div className={styles.player_page_stats}>
               <h2 className='text-xl font-bold'>Partner AVG</h2>
-              <div>{pa[0]["pa"]}</div>
+              <div>{formatAverage(pa[0]["pa"])}</div>
             </div>
 
           </div>

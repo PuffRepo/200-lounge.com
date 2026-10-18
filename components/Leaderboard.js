@@ -1,3 +1,4 @@
+import {formatAverage} from '../lib/format-average.cjs'
 import rankColors from '../lib/rank-colors.cjs'
 import SeasonPreservingLink from './SeasonPreservingLink'
 import styles from '../styles/Table.module.css'
@@ -418,11 +419,11 @@ export default function Leaderboard(props) {
                                         </StyledTableCell>
 
                                         <StyledTableCell align="center">
-                                            {parseFloat(row['Partner AVG']) || "N/A"}
+                                            {formatAverage(row['Partner AVG'])}
                                         </StyledTableCell>
 
                                         <StyledTableCell align="center">
-                                            {parseFloat(row['AVG Score'])}
+                                            {formatAverage(row['AVG Score'])}
                                         </StyledTableCell>
 
 

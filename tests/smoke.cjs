@@ -40,6 +40,15 @@ async function main(){
       if(route==='/player/P13')assert.ok(body.includes('Unplaced'));
       console.log('PASS',status,route);
     }
+    for(const route of ['/?season=5','/player/P12?season=6','/mogi/1?season=7','/stats?season=5','/records?season=7']) {
+      const response=await fetch(base+route,{redirect:'manual'});assert.equal(response.status,307,route);assert.equal(response.headers.get('location'),'/?season=9');
+    }
+    const oldStats=await fetch(base+'/new_stats?season=5',{redirect:'manual'});assert.equal(oldStats.status,307);assert.equal(oldStats.headers.get('location'),'/stats?season=9');
+    assert.equal((await fetch(base+'/api/all_players?season=5')).status,400);
+    const html=await (await fetch(base+'/')).text();
+    assert.ok(!/season [567]<|season [567]\s*</.test(html),'unavailable season links exposed');
+    assert.ok(html.includes('100.00'),'average not formatted to two decimals');
+    console.log('PASS S9-only navigation, archived link redirects and floored averages');
     const flag=await fetch(base+'/flags/jp.svg');assert.equal(flag.status,200);assert.ok((await flag.text()).includes('<svg'));
     console.log('PASS bundled flag HTTP asset');
     fixture.generated_at=new Date(Date.now()-901000).toISOString();await fs.writeFile(file,JSON.stringify(fixture));

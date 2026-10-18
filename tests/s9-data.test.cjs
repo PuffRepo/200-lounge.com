@@ -8,9 +8,10 @@ const ranks=require('../lib/rank-colors.cjs');
 const original=require('./fixtures/s9.json');
 const fixture=()=>({...structuredClone(original),generated_at:new Date().toISOString()});
 
-test('S9 is default; archives remain explicit; ambiguous/unsupported seasons rejected',()=>{
-  assert.equal(s9.season(),9);assert.equal(s9.season({season:'7'}),7);
-  for(const season of ['8','10','7 OR 1=1',['9','7'],9])assert.throws(()=>s9.season({season}));
+test('Only S9 is available; old page links redirect and archive APIs reject explicitly',()=>{
+  assert.equal(s9.season(),9);assert.equal(s9.season({season:'9'}),9);
+  for(const season of ['5','6','7'])assert.equal(s9.archiveRedirect({season}).redirect.destination,'/?season=9');
+  for(const season of ['5','6','7','8','10','7 OR 1=1',['9','7'],9])assert.throws(()=>s9.season({season}));
 });
 test('Python-exported contract preserves names, exact Discord IDs and credited MMR',()=>{
   const data=s9.validateSnapshot(fixture());
@@ -67,12 +68,12 @@ test('S9 rank colors follow approved thresholds without changing archive colors'
   assert.equal(ranks.rankClass(9000,7),ranks.colors.Master);assert.equal(ranks.rankClass(null),ranks.colors.Placement);
 });
 function response(){return {headers:{},setHeader(key,value){this.headers[key]=value;},status(code){this.code=code;return this;},json(value){this.body=value;return this;}};}
-test('unconfigured S9 API returns 503 while explicit archives can use the old adapter',async t=>{
+test('unconfigured S9 API returns 503; archived API never falls through to a legacy database',async t=>{
   const saved={...process.env};delete process.env.S9_PUBLIC_DATA_FILE;delete process.env.S9_PUBLIC_DATA_URL;
   t.after(()=>{process.env=saved;});
   const res=response();assert.equal(await s9.handleApi({query:{}},res,'all_players'),true);
   assert.equal(res.code,503);assert.equal(res.headers['Cache-Control'],'no-store');
-  assert.equal(await s9.handleApi({query:{season:'7'}},response(),'all_players'),false);
+  const archived=response();assert.equal(await s9.handleApi({query:{season:'7'}},archived,'all_players'),true);assert.equal(archived.code,400);
   const invalid=response();await s9.handleApi({query:{season:'8'}},invalid,'all_players');assert.equal(invalid.code,400);
 });
 test('configured JSON refresh is read on each request; stale data cannot stay cached',async t=>{
@@ -103,4 +104,10 @@ test('every accepted country has a bundled flag; unknown codes do not create URL
   const codes=require('i18n-iso-countries/codes.json');
   for(const [code] of codes)assert.ok((await fs.stat(path.join(__dirname,'../public/flags',code.toLowerCase()+'.svg'))).size>0);
   assert.equal(s9.countryCode('uk'),'');
+});
+
+
+test('score averages floor to exactly two decimal places, preserve zero and missing values',()=>{
+  const {formatAverage}=require('../lib/format-average.cjs');
+  for(const [input,expected] of [[82.99999,'82.99'],[82.1,'82.10'],[82,'82.00'],[0,'0.00'],[1.15,'1.15'],[1.005,'1.00'],[1e-7,'0.00'],[-1.231,'-1.24'],[null,'N/A'],[undefined,'N/A'],[NaN,'N/A'],[Infinity,'N/A']])assert.equal(formatAverage(input),expected);
 });
