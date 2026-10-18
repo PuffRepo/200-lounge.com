@@ -1,11 +1,7 @@
 FROM node:24-bookworm-slim AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-# Optional trust bundle for development networks that provide their own HTTPS CA.
-# Railway normally needs no secret; TLS verification remains enabled either way.
-RUN --mount=type=secret,id=network-ca \
-    if [ -f /run/secrets/network-ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/network-ca; fi; \
-    npm ci --ignore-scripts --no-audit --no-fund --cache /tmp/npm-cache
+RUN npm ci --ignore-scripts --no-audit --no-fund --cache /tmp/npm-cache
 
 FROM node:24-bookworm-slim AS build
 WORKDIR /app

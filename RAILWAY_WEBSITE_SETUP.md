@@ -152,3 +152,9 @@ the HTTPS proxy required the supplied CA). A CA-enabled registry ping succeeded,
 but the complete networked install remained stalled and was canceled. The
 normal Dockerfile retains verified HTTPS installation; Railway's actual remote
 build is still a deployment-time check. No test image or fixture was deployed.
+
+Railway builder compatibility: the deployment Dockerfile uses a plain
+`RUN npm ci` with normal TLS and lockfile integrity verification. It contains
+no BuildKit secret mounts; Railway rejected the previous optional development
+CA mount. Cloud-specific network/certificate diagnostics are not required
+Railway settings and must not be copied into the deployment Dockerfile.
