@@ -27,7 +27,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
-import ReactCountryFlag from "react-country-flag"
+import ReactCountryFlag from "./CountryFlag"
 
 // theme is required? i guess
 import { useTheme } from '@mui/material/styles'

@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
   try { season=s9.season(context.query) } catch { return {notFound:true} }
   if(season===9) {
     context.res.setHeader('Cache-Control','no-store')
-    try { const data=await s9.loadSnapshot(); return {props:{rows:s9.leaderboard(data),current_season:9,countries:[],s9GeneratedAt:data.generated_at}} }
+    try { const data=await s9.loadSnapshot(); return {props:{rows:s9.leaderboard(data),current_season:9,countries:s9.countryList(data),s9GeneratedAt:data.generated_at}} }
     catch { context.res.statusCode=503; return {props:{s9Unavailable:true}} }
   }
   const db_choice = `s${season}200lounge`

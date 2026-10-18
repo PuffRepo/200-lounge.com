@@ -87,3 +87,20 @@ test('configured JSON refresh is read on each request; stale data cannot stay ca
   changed.generated_at=new Date(Date.now()-901000).toISOString();await fs.writeFile(process.env.S9_PUBLIC_DATA_FILE,JSON.stringify(changed));
   const stale=response();await s9.handleApi({query:{}},stale,'all_players');assert.equal(stale.code,503);
 });
+
+
+test('countries reach leaderboard, profile, API and filter; old feeds remain compatible',()=>{
+  const raw=fixture();raw.players[0].country_code=' jp ';raw.players[1].country_code='US';
+  const data=s9.validateSnapshot(raw),p=data.players[0];
+  assert.equal(p.country_code,'JP');assert.equal(s9.leaderboard(data)[0].Country,'JP');
+  assert.equal(s9.playerProps(data,p.name).props.results[0].country,'JP');
+  assert.equal(s9.apiPlayer(p).country_code,'JP');
+  assert.deepEqual(s9.countryList(data),[{country_code:'JP'},{country_code:'US'}]);
+  for(const bad of [null,{},'ZZ','../us','<img>', 'USA'])assert.equal(s9.countryCode(bad),'');
+  assert.equal(s9.validateSnapshot(fixture()).players[0].country_code,'');
+});
+test('every accepted country has a bundled flag; unknown codes do not create URLs',async()=>{
+  const codes=require('i18n-iso-countries/codes.json');
+  for(const [code] of codes)assert.ok((await fs.stat(path.join(__dirname,'../public/flags',code.toLowerCase()+'.svg'))).size>0);
+  assert.equal(s9.countryCode('uk'),'');
+});

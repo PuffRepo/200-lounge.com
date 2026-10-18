@@ -9,6 +9,7 @@ const {once}=require('node:events');
 async function main(){
   const root=path.resolve(__dirname,'..'),dir=await fs.mkdtemp(path.join(os.tmpdir(),'s9-smoke-'));
   const file=path.join(dir,'public.json'),fixture=structuredClone(require('./fixtures/s9.json'));
+  fixture.players[0].country_code='JP';fixture.players[11].country_code='US';
   fixture.generated_at=new Date().toISOString();await fs.writeFile(file,JSON.stringify(fixture));
   const socket=net.createServer();socket.listen(0,'127.0.0.1');await once(socket,'listening');const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
   const standalone=process.env.STANDALONE_SMOKE==='1';
@@ -32,10 +33,15 @@ async function main(){
       const response=await fetch(base+route),body=await response.text();
       assert.equal(response.status,status,route+' '+body.slice(0,150));
       if(route.startsWith('/api/all_players'))assert.equal(JSON.parse(body)[0].player_id,'123456789123456789');
-      if(route==='/api/player/P12')assert.equal(JSON.parse(body)[0].mmr,5900);
+      if(route==='/api/player/P12'){assert.equal(JSON.parse(body)[0].mmr,5900);assert.equal(JSON.parse(body)[0].country_code,'US');}
+      if(route==='/')assert.ok(body.includes('/flags/jp.svg'),'leaderboard flag missing');
+      if(route==='/player/P12')assert.ok(body.includes('/flags/us.svg'),'profile flag missing');
+      assert.ok(!body.includes('/flags/.svg'),'unknown country created a broken image');
       if(route==='/player/P13')assert.ok(body.includes('Unplaced'));
       console.log('PASS',status,route);
     }
+    const flag=await fetch(base+'/flags/jp.svg');assert.equal(flag.status,200);assert.ok((await flag.text()).includes('<svg'));
+    console.log('PASS bundled flag HTTP asset');
     fixture.generated_at=new Date(Date.now()-901000).toISOString();await fs.writeFile(file,JSON.stringify(fixture));
     assert.equal((await fetch(base+'/api/all_players')).status,503);
     assert.equal((await fetch(base+'/api/health')).status,503);

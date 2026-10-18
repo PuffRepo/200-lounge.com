@@ -3,7 +3,7 @@ import s9 from '../../lib/s9-data.cjs'
 import S9Status from '../../components/S9Status'
 import * as React from 'react';
 import { useState, useEffect } from 'react'
-import ReactCountryFlag from "react-country-flag"
+import ReactCountryFlag from "../../components/CountryFlag"
 import Head from 'next/head'
 import mysql from 'mysql2'
 import styles from '../../styles/Home.module.css'
