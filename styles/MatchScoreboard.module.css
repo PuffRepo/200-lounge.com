@@ -1,0 +1,50 @@
+.container {
+  width: min(100%, 46rem);
+  margin: 1.5rem 0;
+  color: #fafafa;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #28282b;
+  font-variant-numeric: tabular-nums;
+}
+.caption {
+  background: #1d185f;
+  padding: .8rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.table th, .table td {
+  padding: .55rem .75rem;
+  text-align: center;
+}
+.table thead, .table tfoot {
+  background: #1d185f;
+}
+.team:nth-of-type(even) {
+  background: #37373a;
+}
+.team + .team {
+  border-top: 2px solid #555;
+}
+.table .player {
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.player a:hover {
+  text-decoration: underline;
+}
+.total {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.note {
+  color: #bcbcc6;
+  font-size: .8rem;
+  margin-top: .4rem;
+}
+@media (max-width: 450px) {
+  .table th, .table td { padding: .45rem .3rem; }
+  .caption { font-size: 1rem; }
+}

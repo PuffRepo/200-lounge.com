@@ -7,6 +7,7 @@ import mysql from 'mysql2'
 import styles from '../../styles/Home.module.css'
 import Image from 'next/image'
 import MMRTable from '../../components/MMRTable';
+import MatchScoreboard from '../../components/MatchScoreboard'
 
 
 
@@ -86,7 +87,7 @@ export default function Mogi(props) {
   return props.s9Unavailable ? <S9Status /> : <MogiContent {...props} />
 }
 
-function MogiContent({ results, pm, avg_room_mmr, season = 9 }) {
+function MogiContent({ results, pm, avg_room_mmr, season = 9, scoreboard }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -102,7 +103,7 @@ function MogiContent({ results, pm, avg_room_mmr, season = 9 }) {
             tier-{results[0].tier_name} mogi
           </h1>
           {/* <div className='max-w-2xl pt-5 z-10 m-auto justify-center'> */}
-          {results[0].table_url ? <Image src={results[0].table_url} alt='mogi results image' width={860} height={520} priority></Image> : <div className='m-10'>Lorenzi Table Image Not Found</div>}
+          {scoreboard ? <MatchScoreboard scoreboard={scoreboard} /> : results[0].table_url ? <Image src={results[0].table_url} alt='mogi results image' width={860} height={520} priority></Image> : <div className='m-10'>Score table unavailable</div>}
 
           <div className='flex flex-row flex-wrap w-full justify-center'>
 

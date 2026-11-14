@@ -38,6 +38,12 @@ async function main(){
       if(route==='/player/P12')assert.ok(body.includes('/flags/us.svg'),'profile flag missing');
       assert.ok(!body.includes('/flags/.svg'),'unknown country created a broken image');
       if(route==='/player/P13')assert.ok(body.includes('Unplaced'));
+      if(route==='/mogi/1'){
+        assert.ok(body.includes('Race results'),'race scoreboard missing');
+        assert.ok(body.includes('Team total'),'team scores missing');
+        assert.ok(body.includes('984'),'match point total missing');
+        assert.ok(!body.includes('Lorenzi Table Image Not Found'),'image placeholder still displayed');
+      }
       console.log('PASS',status,route);
     }
     for(const route of ['/?season=5','/player/P12?season=6','/mogi/1?season=7','/stats?season=5','/records?season=7']) {
@@ -51,6 +57,25 @@ async function main(){
     console.log('PASS S9-only navigation, archived link redirects and floored averages');
     const flag=await fetch(base+'/flags/jp.svg');assert.equal(flag.status,200);assert.ok((await flag.text()).includes('<svg'));
     console.log('PASS bundled flag HTTP asset');
+    for(const size of [1,2,3,4]){
+      const scores=structuredClone(fixture);
+      scores.tables[0].format_size=size;
+      scores.tables[0].rows.forEach((row,i)=>{row.team=Math.floor(i/size);row.place=Math.floor(i/size)+1;});
+      scores.tables[0].rows[0].played_as='<img src=x onerror=alert(1)>';
+      await fs.writeFile(file,JSON.stringify(scores));
+      const response=await fetch(base+'/mogi/1');assert.equal(response.status,200);
+      const body=await response.text();
+      assert.ok(body.includes('Race results')&&body.includes('984'));
+      assert.equal(body.includes('Team total'),size>1);
+      assert.ok(body.includes('&lt;img src=x onerror=alert(1)&gt;'),'recorded names must be escaped');
+      assert.ok(!body.includes('<img src=x onerror=alert(1)>'));
+      const match=body.match(/<script[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+      const scoreboard=JSON.parse(match[1]).props.pageProps.scoreboard;
+      assert.equal(scoreboard.teams.flatMap(t=>t.players).length,12);
+      assert.equal(scoreboard.teams.length,12/size);
+      console.log('PASS built match scoreboard format',size,'and escaped international/player names');
+    }
+    await fs.writeFile(file,JSON.stringify(fixture));
     // Reproduce the production roster size without live data or a database.
     const large=structuredClone(fixture);
     for(let i=14;i<=1916;i++)large.players.push({...structuredClone(fixture.players.find(p=>p.user_id==='13')),user_id:String(900000000000000000n+BigInt(i)),mkc_id:null,name:`FixturePlayer-${i}`,country_code:i%2?'JP':'US'});
