@@ -8,6 +8,7 @@ import styles from '../../styles/Home.module.css'
 import Image from 'next/image'
 import MMRTable from '../../components/MMRTable';
 import MatchScoreboard from '../../components/MatchScoreboard'
+import PublishedResultImage from '../../components/PublishedResultImage'
 
 
 
@@ -103,7 +104,7 @@ function MogiContent({ results, pm, avg_room_mmr, season = 9, scoreboard }) {
             tier-{results[0].tier_name} mogi
           </h1>
           {/* <div className='max-w-2xl pt-5 z-10 m-auto justify-center'> */}
-          {scoreboard ? <MatchScoreboard scoreboard={scoreboard} /> : results[0].table_url ? <Image src={results[0].table_url} alt='mogi results image' width={860} height={520} priority></Image> : <div className='m-10'>Score table unavailable</div>}
+          {scoreboard ? <PublishedResultImage key={results[0].mogi_id} tableId={results[0].mogi_id} fallback={<MatchScoreboard scoreboard={scoreboard} />} /> : results[0].table_url ? <Image src={results[0].table_url} alt='mogi results image' width={860} height={520} priority></Image> : <div className='m-10'>Score table unavailable</div>}
 
           <div className='flex flex-row flex-wrap w-full justify-center'>
 
