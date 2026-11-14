@@ -43,6 +43,7 @@ async function main(){
         assert.ok(body.includes('Team total'),'team scores missing');
         assert.ok(body.includes('984'),'match point total missing');
         assert.ok(!body.includes('Lorenzi Table Image Not Found'),'image placeholder still displayed');
+        assert.ok(body.includes('/api/results/1'),'published image source missing');
       }
       console.log('PASS',status,route);
     }
@@ -55,6 +56,10 @@ async function main(){
     assert.ok(!/season [567]<|season [567]\s*</.test(html),'unavailable season links exposed');
     assert.ok(html.includes('100.00'),'average not formatted to two decimals');
     console.log('PASS S9-only navigation, archived link redirects and floored averages');
+    assert.equal((await fetch(base+'/api/results/1')).status,503,'unavailable original image should allow scoreboard fallback');
+    assert.equal((await fetch(base+'/api/results/999')).status,404);
+    assert.equal((await fetch(base+'/api/results/1',{method:'POST'})).status,405);
+    console.log('PASS original image endpoint fails safely with scoreboard still rendered');
     const flag=await fetch(base+'/flags/jp.svg');assert.equal(flag.status,200);assert.ok((await flag.text()).includes('<svg'));
     console.log('PASS bundled flag HTTP asset');
     for(const size of [1,2,3,4]){
