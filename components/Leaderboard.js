@@ -1,3 +1,4 @@
+import {sortLeaderboard, filterLeaderboard} from '../lib/leaderboard-sort.cjs'
 import {formatAverage} from '../lib/format-average.cjs'
 import rankColors from '../lib/rank-colors.cjs'
 import SeasonPreservingLink from './SeasonPreservingLink'
@@ -41,7 +42,7 @@ countries.registerLocale(require("i18n-iso-countries/langs/en.json")); // for En
 
 
 export default function Leaderboard(props) {
-    let rows = props.rows
+    const rows = props.rows
     const current_season = props.season
     const isMobile = props.isMobile
     const countries = props.countries
@@ -161,9 +162,6 @@ export default function Leaderboard(props) {
     //--------------------------------------------------------------------------- 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(50);
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -173,8 +171,8 @@ export default function Leaderboard(props) {
     };
     const columns = Object.keys(rows[0] || {player_id:null,Rank:null,Country:'','Player Name':'',MMR:null,'Peak MMR':null,'Win Rate':null,'Events Played':0,'Partner AVG':null,'AVG Score':null,'Largest Gain':0,'Largest Loss':0});
     const [sortedBy, setSortedBy] = useState({
-        column: columns[1],
-        asc: false,
+        column: 'Rank',
+        asc: true,
     });
     // Search bar state
     const [query, setQuery] = useState("")
@@ -193,56 +191,21 @@ export default function Leaderboard(props) {
 
 
 
-    // bubble sort the data
-    function sort(rows) {
-        const { column, asc } = sortedBy;
-        return rows.sort(function (a, b) {
-            // I removed a[column].toString() in order to sort numbers properly.
-            // There should be no type mismatches in my data... i think
-            try {
-                // Sort by country
-                // I guess the country flag object I am using gets parsed to NaN - need to account for this
-                if (column == 'Country') {
-                    throw err
-                }
-                // Sort decimal numbers
-                var x = parseFloat(a[column])
-                var y = parseFloat(b[column])
-            } catch {
-                // Sort strings
-                var x = a[column]
-                var y = b[column]
-            } finally {
-                // console.log('x: ',x, typeof x)
-                if (x > y) return asc ? -1 : 1
-                if (y > x) return asc ? 1 : -1
-            }
-            return 0;
-        });
-    }
-
-
-    function filter(rows) {
-        return rows.filter(row => {
-            // Filtering based on the query across all columns
-            const matchesQuery = columns.some(column =>
-                row[column] ? row[column].toString().toLowerCase().includes(query.toLowerCase()) : false
-            )
-            // Filtering based on events played
-            const matchesMinEventFilter = minEventsPlayedFilter ? row['Events Played'] >= parseInt(minEventsPlayedFilter) : true
-            const matchesMaxEventFilter = maxEventsPlayedFilter ? row['Events Played'] <= parseInt(maxEventsPlayedFilter) : true
-            // MMR filter
-            const matchesMinMMRFilter = minMMRFilter ? parseInt(row['MMR']) >= parseInt(minMMRFilter) : true
-            const matchesMaxMMRFilter = maxMMRFilter ? parseInt(row['MMR']) <= parseInt(maxMMRFilter) : true
-            // Filtering based on selected country
-            const matchesCountry = selectedCountry ? row['Country'] === selectedCountry : true // Adjust this line if the country code is stored differently in your rows.
-
-            return matchesQuery && matchesMinEventFilter && matchesMaxEventFilter && matchesCountry && matchesMinMMRFilter && matchesMaxMMRFilter
-
-        })
-    }
-
-
+    const filteredRows = filterLeaderboard(rows, {
+        query, country: selectedCountry, minMMR: minMMRFilter, maxMMR: maxMMRFilter,
+        minEvents: minEventsPlayedFilter, maxEvents: maxEventsPlayedFilter,
+    });
+    const sortedRows = sortLeaderboard(filteredRows, sortedBy.column, sortedBy.asc);
+    const lastPage = rowsPerPage > 0 ? Math.max(0, Math.ceil(sortedRows.length / rowsPerPage) - 1) : 0;
+    const visiblePage = Math.min(page, lastPage);
+    const visibleRows = rowsPerPage > 0
+        ? sortedRows.slice(visiblePage * rowsPerPage, (visiblePage + 1) * rowsPerPage)
+        : sortedRows;
+    const emptyRows = visiblePage > 0 && rowsPerPage > 0 ? rowsPerPage - visibleRows.length : 0;
+    useEffect(() => {
+        setPage(0);
+    }, [query, selectedCountry, minMMRFilter, maxMMRFilter,
+        minEventsPlayedFilter, maxEventsPlayedFilter, sortedBy]);
 
     // Turn countries into a workable list
     const availableCountries = countries.map(row => ({
@@ -343,10 +306,11 @@ export default function Leaderboard(props) {
                             {/* React.Fragment used instead of <> so that each column gets a key. No more error :3 */}
                             {
                                 columns.map((column, idx) => (column === "player_id" ? <React.Fragment key={column}></React.Fragment>:
-                                    <StyledTableCell key={column} align="center">
-                                        <div
+                                    <StyledTableCell key={column} align="center" sortDirection={sortedBy.column === column ? (sortedBy.asc ? 'asc' : 'desc') : false}>
+                                        <button type="button"
                                             className={styles.table_header_text}
-                                            onClick={() => setSortedBy((prev) => ({ column: column, asc: !prev.asc }))}>
+                                            aria-label={`Sort by ${column}`}
+                                            onClick={() => setSortedBy(prev => ({ column, asc: prev.column === column ? !prev.asc : true }))}>
                                             <div>{column}</div>
                                             <div>{sortedBy.column === column &&
                                                 (sortedBy.asc
@@ -354,7 +318,7 @@ export default function Leaderboard(props) {
                                                     : <ChevronDownIcon className="w-5 h-5" />
                                                 )}
                                             </div>
-                                        </div>
+                                        </button>
                                     </StyledTableCell>
                                 ))
                             }
@@ -364,15 +328,14 @@ export default function Leaderboard(props) {
                     <TableBody>
 
                         {/* each record gets these divs */}
-                        {(rowsPerPage > 0
-                            ? sort(filter(rows)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : sort(filter(rows))).map((row, idx) => (
+                        {visibleRows.map((row) => (
 
                                     <StyledTableRow key={row.player_id}>
                                         <StyledTableCell align="center">
                                             <div className={rankColors.rankClass(row.MMR,current_season)}>
                                                 <div className='cursor-pointer hover:underline'>
                                                 <SeasonPreservingLink to={`/player/` + encodeURIComponent(row['Player Name'])}>
-                                                        {parseInt(row.Rank)}
+                                                        {row.Rank == null ? '—' : row.Rank}
                                                     </SeasonPreservingLink>
                                                 </div>
                                             </div>
@@ -455,9 +418,9 @@ export default function Leaderboard(props) {
                             <TablePagination
                                 rowsPerPageOptions={[10, 25, 50, { label: 'All', value: -1, bgcolor: '#000000' }]}
                                 colSpan={columns.length}
-                                count={rows.length}
+                                count={filteredRows.length}
                                 rowsPerPage={rowsPerPage}
-                                page={page}
+                                page={visiblePage}
                                 sx={{ bgcolor: '#1d185f', color: '#ffffff' }}
                                 SelectProps={{
                                     inputProps: {
